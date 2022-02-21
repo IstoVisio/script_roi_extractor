@@ -9,8 +9,7 @@ import tkinter as tk
 
 returnString = ""
 
-def extract_roi(projectPath, roi_index): 
-	project = sy.get_project(projectPath)
+def extract_roi(project, projectPath, roi_index): 
 	head, tail = os.path.split(projectPath)
 
 	os.chdir(os.path.dirname(projectPath))
@@ -36,7 +35,7 @@ def get_roi_number():
 	tk.WSignUp = tk.Button(root, text="Extract", command=getvalue).grid(row=3, column=0) #button
 	root.mainloop()
 
-def main():
+def main(args):
 	print("ROI Extractor, by Michael Morehead")
 	print("Attempts to extract a specific ROI volume from a syGlass project")
 	print("and write it to a series of TIFF files")
@@ -44,21 +43,21 @@ def main():
 	print("Usage: Highlight a project and use the Script Launcher in syGlass.")
 	print("---------------------------------------")
 	
+	projectList = args["selected_projects"]
+
 	doExtract = True
-	if len(sys.argv[0]) < 1:
+	if len(projectList) < 1:
 		print("Highlight a project before running to select a project!")
 		doExtract = False
 	
-	if len(sys.argv) > 1:
+	if len(projectList) > 1:
 		print("This script only supports 1 project at a time, please select only one project before running.")
 		doExtract = False
 	
 	if doExtract:
-		syGlassProjectPath = sys.argv[0]
+		project = projectList[0]
+		projectPath = project.get_path_to_syg_file().string()
 		get_roi_number()
 		global returnString
-		print("Extracting ROI " + str(returnString) + " from: " + syGlassProjectPath)
-		extract_roi(syGlassProjectPath, returnString)
-
-if __name__== "__main__":
-	main()
+		print("Extracting ROI " + str(returnString) + " from: " + projectPath)
+		extract_roi(project, projectPath, returnString)
